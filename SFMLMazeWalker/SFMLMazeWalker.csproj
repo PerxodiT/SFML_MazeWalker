@@ -1,0 +1,159 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <StartupObject>SFMLMazeWalker.Program</StartupObject>
+    <Platforms>AnyCPU;x64</Platforms>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <PlatformTarget>x64</PlatformTarget>
+    <OutputPath>F:\УП\SFMLMazeWalker\Output\</OutputPath>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <PlatformTarget>x64</PlatformTarget>
+    <OutputPath>F:\УП\SFMLMazeWalker\Output\</OutputPath>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <PlatformTarget>x64</PlatformTarget>
+    <OutputPath>F:\УП\SFMLMazeWalker\ReleaseOutput\</OutputPath>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <PlatformTarget>x64</PlatformTarget>
+    <OutputPath>F:\УП\SFMLMazeWalker\ReleaseOutput\</OutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Setting.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Recources\button.wav" />
+    <None Remove="Recources\cursor.png" />
+    <None Remove="Recources\FPS_Font.ttf" />
+    <None Remove="Recources\ingame-music.wav" />
+    <None Remove="Recources\katakana.ttf" />
+    <None Remove="Recources\Map.png" />
+    <None Remove="Recources\menu-music.wav" />
+    <None Remove="Recources\MenuFont.otf" />
+    <None Remove="Recources\menu_bg.jpg" />
+    <None Remove="Recources\skybox.png" />
+    <None Remove="Recources\steps-old.wav" />
+    <None Remove="Recources\steps.wav" />
+    <None Remove="Recources\wall.jpg" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="bin\Recources\wall.jpg" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="bin\Recources\steps-old.wav" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="bin\Recources\steps.wav" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="bin\Recources\skybox.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="bin\Recources\menu-music.wav" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="bin\Recources\MenuFont.otf" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="bin\Recources\menu_bg.jpg" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="bin\Recources\Map.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="bin\Recources\katakana.ttf" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="bin\Recources\ingame-music.wav" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="bin\Recources\FPS_Font.ttf" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="bin\Recources\button.wav" />
+    <None Include="Setting.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CUDAfy.NET" Version="1.29.5576.13786" />
+    <PackageReference Include="SFML.Net" Version="2.5.0" />
+    <PackageReference Include="System.ComponentModel.Composition" Version="4.7.0" />
+    <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="4.7.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="NPP">
+      <HintPath>..\lib\NPP.dll</HintPath>
+    </Reference>
+    <Reference Include="NVGraph">
+      <HintPath>..\lib\NVGraph.dll</HintPath>
+    </Reference>
+    <Reference Include="NVRTC">
+      <HintPath>..\lib\NVRTC.dll</HintPath>
+    </Reference>
+    <Reference Include="OpenTK">
+      <HintPath>..\lib\OpenTK.dll</HintPath>
+    </Reference>
+    <Reference Include="OpenTK.GLControl">
+      <HintPath>..\lib\OpenTK.GLControl.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xaml">
+      <HintPath>..\..\System.Xaml.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Recources\button.wav" />
+    <Resource Include="Recources\cursor.png" />
+    <Resource Include="Recources\FPS_Font.ttf" />
+    <Resource Include="Recources\ingame-music.wav" />
+    <Resource Include="Recources\katakana.ttf" />
+    <Resource Include="Recources\Map.png" />
+    <Resource Include="Recources\menu-music.wav" />
+    <Resource Include="Recources\MenuFont.otf" />
+    <Resource Include="Recources\menu_bg.jpg" />
+    <Resource Include="Recources\skybox.png" />
+    <Resource Include="Recources\steps-old.wav" />
+    <Resource Include="Recources\steps.wav" />
+    <Resource Include="Recources\wall.jpg" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Resources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+
+</Project>
