@@ -14,9 +14,12 @@ namespace MazeWalker
         }
         public uint x { get; set; }
         public uint y { get; set; }
+
     }
     class Map
     {
+
+        public bool[,] map { get; private set; }
         public int Width { get; private set; }
         public int Height { get; private set; }
         public int Tile { get; private set; }
@@ -39,15 +42,18 @@ namespace MazeWalker
             
             
             DiagLen = Math.Sqrt(Width * Width + Height * Height);
-
             Tile = Settings.mHeight / Height;
+            map = new bool[Height, Width];
 
             for (uint y = 0; y < Height; y++)
                 for (uint x = 0; x < Width; x++)
                 {
                     var pixel = map_image.GetPixel(x, y);
                     if (pixel != new Color(255, 255, 255, 255))
+                    {
                         walls.Add(Coord(x, y), pixel);
+                        map[x, y] = true;
+                    }   
                 }
             
             Out = new Coord((uint)maze.End.X * 2 + 1, (uint)maze.End.Y * 2 + 1);

@@ -113,7 +113,11 @@ namespace MazeWalker
 
             for (int tid = 0; tid < dists.Length; tid++)
             {
-                dists[tid] = RayCast.Ray((float)x, (float)y, angles[tid], out offsets[tid]) * Math.Cos(a - angles[tid]);
+
+                //dists[tid] = RayCast.Ray((float)x, (float)y, angles[tid], out offsets[tid]) * Math.Cos(a - angles[tid]);
+                double v = offsets[tid];
+                dists[tid] = RayCast.Ray(x, y, angles[tid], &v, Map.map, Map.Width) * Math.Cos(a - angles[tid]);
+                offsets[tid] = v;
                 //RayCast.Ray(x, y, angles[tid], out offsets[tid], out dists[tid], a);
             }
 

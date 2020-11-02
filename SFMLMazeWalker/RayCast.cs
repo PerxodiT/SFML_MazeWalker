@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Runtime.InteropServices;
 using System.Timers;
 using Cudafy;
 
@@ -17,11 +18,13 @@ namespace MazeWalker
         {
             Map = map;
         }
+        
+        [DllImport("RayCastDLL.dll")]
+        static unsafe extern double Ray(float px, float py, double angle, float* offset, bool** map, int Width);
 
+        /*
         public double Ray(float px, float py, double angle, out double offset)
         {
-            //float offset = default;
-            //Color colorX = Color.Black, colorY = Color.Black;
             int x, y;
             float sin_ang = (float)GMath.Sin((float)angle);
             float cos_ang = (float)GMath.Cos((float)angle);
@@ -75,5 +78,6 @@ namespace MazeWalker
                 return distY;
             }
         }
+        */
     }
 }
