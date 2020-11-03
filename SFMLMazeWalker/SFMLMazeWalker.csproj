@@ -15,8 +15,9 @@
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <PlatformTarget>x64</PlatformTarget>
-    <OutputPath>F:\УП\SFMLMazeWalker\Output\</OutputPath>
+    <OutputPath>$(SolutionDir)$(Platform)\$(Configuration)\</OutputPath>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -99,10 +100,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="CUDAfy.NET" Version="1.29.5576.13786" />
     <PackageReference Include="SFML.Net" Version="2.5.0" />
     <PackageReference Include="System.ComponentModel.Composition" Version="4.7.0" />
     <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="4.7.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\RayCastDLL\RayCastDLL\RayCastDLL.vcxproj" />
   </ItemGroup>
 
   <ItemGroup>

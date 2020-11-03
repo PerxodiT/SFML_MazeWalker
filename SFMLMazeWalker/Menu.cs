@@ -17,7 +17,7 @@ namespace SFMLMazeWalker
         public bool isWin = false, isFirst = true;
         private bool isSettings = false;
 
-        private Button VSynh, ExitSettings;
+        private Button VSynh, ExitSettings, Resolution, FPSLimit;
 
         public Menu()
         {
@@ -54,6 +54,10 @@ namespace SFMLMazeWalker
             exit.SetDestinationPoint(new Vector2f(-200, 50));
             exit.StartAnimation();
 
+            FPSLimit.Enabled = true;
+            VSynh.Enabled = true;
+            ExitSettings.Enabled = true;
+            Resolution.Enabled = true;
             SettingsMenu();
         }
 
@@ -83,9 +87,15 @@ namespace SFMLMazeWalker
             exit.SetPosition(new Vector2f(-200, 200));
             exit.StartAnimation();
 
-            VSynh = new Button("Вертикальная синхронизация: ", Program.button, new Vector2f(-4, 0));
-            VSynh.Enabled = false;
+            FPSLimit = new Button($"Ограничение FPS: {Settings.FPS_Limit}", Program.button, new Vector2f(-6, 0));
+            Resolution = new Button($"Разрешение {Settings.sWidth}X{Settings.sHeight}", Program.button, new Vector2f(-5, 0));
+            string VSynhText = Settings.VSync ? "Вкл" : "Выкл";
+            VSynh = new Button($"Вертикальная синхронизация: {VSynhText}", Program.button, new Vector2f(-4, 0));
             ExitSettings = new Button("Назад", Program.button, new Vector2f(-2, 0));
+
+            FPSLimit.Enabled = false;
+            Resolution.Enabled = false;
+            VSynh.Enabled = false;
             ExitSettings.Enabled = false;
 
             Program.ingame.Pause();
@@ -109,25 +119,49 @@ namespace SFMLMazeWalker
             string VSynhText = Settings.VSync ? "Вкл" : "Выкл";
             VSynh.SetText($"Вертикальная синхронизация: {VSynhText}");
         }
-
-        private void SettingsMenu()
+        private void ResolutionOnClick()
         {
+            Thread.Sleep(300);
+            Settings.ResMode = (Settings.ResMode + 1) % Settings.ResCount;
+            Settings.Update(true);
+        }
+
+        private void FPSLimitOnClick()
+        {
+            Thread.Sleep(300);
+            Settings.CurrentFPS_ID = (Settings.CurrentFPS_ID + 1) % Settings.FpsLimits.Length;
+            Settings.FPS_Limit = Settings.FpsLimits[Settings.CurrentFPS_ID];
+            FPSLimit.SetText($"Ограничение FPS: {Settings.FPS_Limit}");
+        }
+
+        public void SettingsMenu()
+        {
+            isSettings = true;
+
+            FPSLimit.SetText($"Ограничение FPS: {Settings.FPS_Limit}");
+            FPSLimit.SetAction(FPSLimitOnClick);
+            FPSLimit.SetPosition(new Vector2f(Settings.sWidth + 200, Settings.sHeight - 200 - 25));
+            FPSLimit.SetDestinationPoint(new Vector2f(Settings.sWidth - 50 - FPSLimit.GetGlobalBounds().Width, Settings.sHeight - 200 - 25));
+            FPSLimit.StartAnimation();
+
+            Resolution.SetText($"Разрешение {Settings.sWidth}X{Settings.sHeight}");
+            Resolution.SetAction(ResolutionOnClick);
+            Resolution.SetPosition(new Vector2f(Settings.sWidth + 200, Settings.sHeight - 150 - 25));
+            Resolution.SetDestinationPoint(new Vector2f(Settings.sWidth - 50 - Resolution.GetGlobalBounds().Width, Settings.sHeight - 150 - 25));
+            Resolution.StartAnimation();
+
             string VSynhText = Settings.VSync ? "Вкл" : "Выкл";
-            VSynh = new Button($"Вертикальная синхронизация: {VSynhText}", Program.button, new Vector2f(-4, 0));
+            VSynh.SetText($"Вертикальная синхронизация: {VSynhText}");
             VSynh.SetAction(VSynhOnClick);
             VSynh.SetPosition(new Vector2f(Settings.sWidth + 200, Settings.sHeight - 100 - 25));
             VSynh.SetDestinationPoint(new Vector2f(Settings.sWidth - 50 - VSynh.GetGlobalBounds().Width, Settings.sHeight - 100 - 25));
             VSynh.StartAnimation();
 
-            ExitSettings = new Button("Назад", Program.button, new Vector2f(-2, 0));
             ExitSettings.SetAction(ExitSettingsOnClick);
             ExitSettings.SetAnimationEndAction(ExitSettingsOnAnimEnd);
             ExitSettings.SetPosition(new Vector2f(Settings.sWidth + 200, Settings.sHeight - 50 - 25));
             ExitSettings.SetDestinationPoint(new Vector2f(Settings.sWidth - 50 - ExitSettings.GetGlobalBounds().Width, Settings.sHeight - 50 - 25));
             ExitSettings.StartAnimation();
-
-            VSynh.Enabled = true;
-            ExitSettings.Enabled = true;
         }
 
         public void Draw(RenderWindow render)
@@ -148,8 +182,12 @@ namespace SFMLMazeWalker
             render.Draw(newgame);
             render.Draw(settings);
             render.Draw(exit);
+
+            render.Draw(FPSLimit);
+            render.Draw(Resolution);
             render.Draw(VSynh);
             render.Draw(ExitSettings);
+
 
         }
     }

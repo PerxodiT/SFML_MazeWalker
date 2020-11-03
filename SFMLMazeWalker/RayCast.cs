@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Runtime.InteropServices;
 using System.Timers;
-using Cudafy;
 
 //using System.ComponentModel.Composition;
 //using System.Xaml;
@@ -12,15 +11,15 @@ namespace MazeWalker
     struct RayCast
     {
         Map Map;
-        const int THREADS = Settings.RAY_COUNT;
+        //const int THREADS = Settings.RAY_COUNT;
 
         public RayCast(Map map)
         {
             Map = map;
         }
-        
-        [DllImport("RayCastDLL.dll")]
-        static unsafe extern double Ray(float px, float py, double angle, float* offset, bool** map, int Width);
+
+        [DllImport(@"RayCastDLL.dll", CallingConvention = CallingConvention.Cdecl)]
+        public static unsafe extern void Ray(float px, float py, double angle, bool* map, int Width, [MarshalAs(UnmanagedType.LPArray, SizeConst = 2), Out()]float[] result);
 
         /*
         public double Ray(float px, float py, double angle, out double offset)

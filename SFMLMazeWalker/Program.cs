@@ -11,13 +11,13 @@ namespace SFMLMazeWalker
     {
         public static bool isMenu = true;
         public static bool Exit = false;
-        static ContextSettings settings = new ContextSettings()
+        public static ContextSettings settings = new ContextSettings()
         {
             AntialiasingLevel = 16,
             AttributeFlags = ContextSettings.Attribute.Debug
         };
         public static RenderWindow window = new RenderWindow(
-            new VideoMode(Settings.sWidth, Settings.sHeight),
+            new VideoMode((uint)Settings.sWidth, (uint)Settings.sHeight),
             "Maze Walker - The game",
             Styles.Fullscreen,
             settings            
@@ -37,12 +37,27 @@ namespace SFMLMazeWalker
         private static bool isEnding = false;
         private static bool isMatrix = false;
 
-        static void Main(string[] args)
+        public static void Init()
         {
             window.Closed += Window_Closed;
             window.KeyPressed += Window_KeyPressed;
             window.KeyReleased += Window_KeyReleased;
             window.MouseMoved += Window_MouseMoved;
+        }
+
+        static void Main(string[] args)
+        {
+            Init();
+
+            float FPS = 0;
+            int fcount = 0;
+            map = new Map();
+            player = new Player(map);
+
+            Text fps = new Text(FPS.ToString(), new Font(Resources.FPS_Font));
+            fps.FillColor = Color.Red;
+            fps.Position = new Vector2f(Settings.sWidth - 50, 10);
+
 
             ingame = new Music(Resources.ingame_music);
             inmenu = new Music(Resources.menu_music);
@@ -55,26 +70,16 @@ namespace SFMLMazeWalker
             steps.Loop = true;
             ingame.Loop = true;
             inmenu.Loop = true;
-            
 
-            float FPS = 0;
-            
             menu = new Menu();
             menu.OnOpen();
-
-            Text fps = new Text(FPS.ToString(), new Font(Resources.FPS_Font));
-            fps.FillColor = Color.Red;
-            fps.Position = new Vector2f(Settings.sWidth - 50, 10);
-
-            int fcount = 0;
-            map = new Map();
-            player = new Player(map);
-            window.SetMouseCursorVisible(false);
+            
 
             while (window.IsOpen)
             {
-                //window.SetVerticalSyncEnabled(Settings.VSync);
-                //window.SetFramerateLimit(Settings.FPS_Limit);
+                window.SetVerticalSyncEnabled(Settings.VSync);
+                window.SetFramerateLimit(Settings.FPS_Limit);
+                fps.Position = new Vector2f(Settings.sWidth - 50, 10);
 
                 if (Exit) window.Close();
                 fcount++;

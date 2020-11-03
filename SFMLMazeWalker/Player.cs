@@ -4,6 +4,7 @@ using SFML.Window;
 using SFMLMazeWalker;
 using System;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Timers;
 
@@ -19,7 +20,6 @@ namespace MazeWalker
         RayCast RayCast;
         Texture wall_texture;
         System.Drawing.Point mapActivator;
-
         public Player(Map map)
         {
             this.x = map.In.x + 0.5F;
@@ -98,8 +98,8 @@ namespace MazeWalker
         public void Draw(RenderWindow render)
         {
             DrawBG(render);
-            double[] dists = new double[Settings.RAY_COUNT];
-            double[] offsets = new double[Settings.RAY_COUNT];
+            float[] dists = new float[Settings.RAY_COUNT];
+            float[] offsets = new float[Settings.RAY_COUNT];
             double[] angles = new double[Settings.RAY_COUNT];
 
 
@@ -113,12 +113,21 @@ namespace MazeWalker
 
             for (int tid = 0; tid < dists.Length; tid++)
             {
-
-                //dists[tid] = RayCast.Ray((float)x, (float)y, angles[tid], out offsets[tid]) * Math.Cos(a - angles[tid]);
-                double v = offsets[tid];
-                dists[tid] = RayCast.Ray(x, y, angles[tid], &v, Map.map, Map.Width) * Math.Cos(a - angles[tid]);
-                offsets[tid] = v;
-                //RayCast.Ray(x, y, angles[tid], out offsets[tid], out dists[tid], a);
+                unsafe
+                {
+                    fixed (bool* map = Map.map)
+                    {
+                        float[] mas = new float[2];
+                        RayCast.Ray(x,
+                                y,
+                                angles[tid],
+                                map,
+                                Map.Width,
+                                mas);
+                        dists[tid] = mas[0] * (float)Math.Cos(a - angles[tid]);
+                        offsets[tid] = mas[1];
+                    }
+                }
             }
 
 
