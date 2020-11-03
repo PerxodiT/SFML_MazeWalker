@@ -1,8 +1,6 @@
 ﻿using MazeWalker;
 using SFML.Graphics;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace SFMLMazeWalker
 {
@@ -22,7 +20,7 @@ namespace SFMLMazeWalker
                 lines[i] = new MatrixEffectLine(i * TextHeight, (uint)TextHeight, Random, Random.Next(30, 60));
             }
         }
-        
+
         public void Draw(RenderTarget target, RenderStates states)
         {
             foreach (MatrixEffectLine l in lines) l.Draw(target, states);

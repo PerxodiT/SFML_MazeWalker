@@ -2,9 +2,6 @@
 using SFML.Graphics;
 using SFML.System;
 using System;
-using System.Numerics;
-using System.Threading;
-using System.Threading.Channels;
 
 namespace SFMLMazeWalker
 {
@@ -35,7 +32,7 @@ namespace SFMLMazeWalker
 
         public void Init()
         {
-            Length = (int)random.Next((int)(Settings.sHeight*0.3F) / (int)SymbolHeight, (int)(Settings.sHeight * 0.8F) / (int)SymbolHeight);
+            Length = (int)random.Next((int)(Settings.sHeight * 0.3F) / (int)SymbolHeight, (int)(Settings.sHeight * 0.8F) / (int)SymbolHeight);
             Symbols = new Text[Length];
             Speed = new Vector2f(0, random.Next(5, 11));
 

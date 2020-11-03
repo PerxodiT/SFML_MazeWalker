@@ -1,9 +1,9 @@
-﻿using System;
+﻿using MazeWalker;
+using SFML.Audio;
+using SFML.Graphics;
 using SFML.System;
 using SFML.Window;
-using SFML.Graphics;
-using SFML.Audio;
-using MazeWalker;
+using System;
 
 namespace SFMLMazeWalker
 {
@@ -20,7 +20,7 @@ namespace SFMLMazeWalker
             new VideoMode((uint)Settings.sWidth, (uint)Settings.sHeight),
             "Maze Walker - The game",
             Styles.Fullscreen,
-            settings            
+            settings
         );
         static double frametime = 1;
         public static Player player;
@@ -73,7 +73,7 @@ namespace SFMLMazeWalker
 
             menu = new Menu();
             menu.OnOpen();
-            
+
 
             while (window.IsOpen)
             {
@@ -184,7 +184,7 @@ namespace SFMLMazeWalker
                 return;
             }
             if (e.Code != Keyboard.Key.Unknown)
-            isMatrix = false;
+                isMatrix = false;
             return;
         }
 
@@ -211,11 +211,11 @@ namespace SFMLMazeWalker
                 window.Display();
             }
 
-                Text win = new Text("Код 36: Матрица взломана. Выход найден.", font);
-                FloatRect winbox = win.GetGlobalBounds();
-                var text_pos = new Vector2f(Settings.sWidth / 2 - winbox.Width / 2, Settings.sHalfHeight - winbox.Height / 2);
-                win.Position = text_pos;
-            
+            Text win = new Text("Код 36: Матрица взломана. Выход найден.", font);
+            FloatRect winbox = win.GetGlobalBounds();
+            var text_pos = new Vector2f(Settings.sWidth / 2 - winbox.Width / 2, Settings.sHalfHeight - winbox.Height / 2);
+            win.Position = text_pos;
+
             for (byte i = 250; i >= 10; i--)
             {
                 window.Clear(Color.Black);

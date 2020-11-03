@@ -1,9 +1,4 @@
 ﻿using SFML.Graphics;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MazeWalker
 {
@@ -12,7 +7,7 @@ namespace MazeWalker
         public static Image Draw(Maze maze)
         {
             //25x25
-            int MapWidth = maze.Width * 2 + 1; 
+            int MapWidth = maze.Width * 2 + 1;
             int MapHeight = maze.Height * 2 + 1;
 
             Image map = new Image((uint)MapWidth, (uint)MapHeight);
@@ -29,7 +24,7 @@ namespace MazeWalker
                     DrawCell(maze.Board, map, x, y);
             return map;
         }
-        
+
         static private void DrawCell(Cell[,] cells, Image map, int x, int y)
         {
             var cell = cells[x, y];

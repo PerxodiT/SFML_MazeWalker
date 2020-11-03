@@ -1,12 +1,13 @@
-﻿using System;
+﻿using SFML.Graphics;
+using SFML.System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using SFML.Graphics;
-using SFML.System;
 
 namespace MazeWalker
 {
-    struct Coord {
+    struct Coord
+    {
         public Coord(uint x, uint y)
         {
             this.x = x;
@@ -39,8 +40,8 @@ namespace MazeWalker
             Image map_image = MazeDrawer.Draw(maze);
             Width = (int)map_image.Size.X;
             Height = (int)map_image.Size.Y;
-            
-            
+
+
             DiagLen = Math.Sqrt(Width * Width + Height * Height);
             Tile = Settings.mHeight / Height;
             map = new bool[Height, Width];
@@ -53,9 +54,9 @@ namespace MazeWalker
                     {
                         walls.Add(Coord(x, y), pixel);
                         map[x, y] = true;
-                    }   
+                    }
                 }
-            
+
             Out = new Coord((uint)maze.End.X * 2 + 1, (uint)maze.End.Y * 2 + 1);
             In = new Coord((uint)maze.Start.X * 2 + 1, (uint)maze.Start.Y * 2 + 1);
 
@@ -70,7 +71,7 @@ namespace MazeWalker
 
         public void Draw(RenderWindow render)
         {
-            RectangleShape mapOutline = new RectangleShape(new Vector2f(Settings.MapSize * 2 * Tile + 5, Settings.MapSize* 2 * Tile + 5))
+            RectangleShape mapOutline = new RectangleShape(new Vector2f(Settings.MapSize * 2 * Tile + 5, Settings.MapSize * 2 * Tile + 5))
             {
                 FillColor = Color.Transparent,
                 OutlineColor = Color.Green,
@@ -97,7 +98,7 @@ namespace MazeWalker
 
                 render.Draw(exit);
             }
-            
+
         }
 
         static public Coord Coord(int x, int y)
@@ -107,7 +108,7 @@ namespace MazeWalker
 
         static public Coord Coord(uint x, uint y)
         {
-           return new Coord(x,y);
+            return new Coord(x, y);
         }
     }
 }

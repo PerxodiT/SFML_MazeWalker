@@ -41,7 +41,7 @@ namespace SFMLMazeWalker
             bool b2 = true;
             if (Speed.X > 0) b1 = Text.Position.X > Destination.X;
             else if (Speed.X < 0) b1 = Text.Position.X < Destination.X;
-            
+
             if (Speed.Y > 0) b2 = Text.Position.Y > Destination.Y;
             else if (Speed.Y < 0) b2 = Text.Position.Y < Destination.Y;
 

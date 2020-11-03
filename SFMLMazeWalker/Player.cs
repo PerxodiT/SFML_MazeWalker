@@ -3,10 +3,6 @@ using SFML.System;
 using SFML.Window;
 using SFMLMazeWalker;
 using System;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Threading.Tasks;
-using System.Timers;
 
 namespace MazeWalker
 {
@@ -77,7 +73,7 @@ namespace MazeWalker
                     break;
             }
             if (new System.Drawing.Point((int)x, (int)y) == mapActivator) Map.isVisible = true;
-            if ((int)x == Map.Out.x && (int)y == Map.Out.y) { Program.menu.isWin = true; Program.menu.OnOpen(); } 
+            if ((int)x == Map.Out.x && (int)y == Map.Out.y) { Program.menu.isWin = true; Program.menu.OnOpen(); }
         }
         private void DrawBG(RenderWindow render)
         {
@@ -105,7 +101,8 @@ namespace MazeWalker
 
             int i = 0;
             double angle = a - Settings.Half_FOV;
-            while (angle < a + Settings.Half_FOV && i < Settings.RAY_COUNT) {
+            while (angle < a + Settings.Half_FOV && i < Settings.RAY_COUNT)
+            {
                 angles[i] = angle;
                 angle += Settings.deltaFOV;
                 i++;
@@ -149,7 +146,7 @@ namespace MazeWalker
                 Screen_x += Settings.Scale;
             }
         }
-        
+
         public void DrawOnMap(RenderWindow render)
         {
             int c = Map.Tile;
@@ -159,10 +156,11 @@ namespace MazeWalker
                 FillColor = Color.Magenta
             };
 
-            CircleShape circle = new CircleShape(c / 2) {
+            CircleShape circle = new CircleShape(c / 2)
+            {
                 FillColor = Color.Red,
                 Origin = new Vector2f(5, 5),
-                Position = new Vector2f(x * c + c/4, y * c + c/4),
+                Position = new Vector2f(x * c + c / 4, y * c + c / 4),
             };
             render.Draw(mapact);
             render.Draw(circle);

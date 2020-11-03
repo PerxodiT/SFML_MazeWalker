@@ -2,7 +2,6 @@
 using SFML.Graphics;
 using SFML.System;
 using SFML.Window;
-using System.Data.SqlTypes;
 
 namespace SFMLMazeWalker
 {
@@ -22,10 +21,10 @@ namespace SFMLMazeWalker
         bool soundPlayed = false;
         VoidEvent onClick;
         public bool Enabled { get; set; }
-        
 
 
-        public Button(string text, Sound hilight, Vector2f speed = new Vector2f(), bool Enabled = true, ButtonState state = ButtonState.Active )
+
+        public Button(string text, Sound hilight, Vector2f speed = new Vector2f(), bool Enabled = true, ButtonState state = ButtonState.Active)
         {
             this.Enabled = Enabled;
             button = new TextAnimation(new Text(text, new Font(Resources.MenuFont)), speed);
@@ -107,11 +106,11 @@ namespace SFMLMazeWalker
                         soundPlayed = true;
                     }
                 }
-                else 
-                { 
+                else
+                {
                     soundPlayed = false;
                 }
-                
+
                 if (Mouse.IsButtonPressed(Mouse.Button.Left) && colider.Contains(Mouse.GetPosition().X, Mouse.GetPosition().Y))
                     onClick?.Invoke();
             }

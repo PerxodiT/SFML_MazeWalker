@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Runtime.InteropServices;
-using System.Timers;
+﻿using System.Runtime.InteropServices;
 
 //using System.ComponentModel.Composition;
 //using System.Xaml;
@@ -19,7 +16,7 @@ namespace MazeWalker
         }
 
         [DllImport(@"RayCastDLL.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static unsafe extern void Ray(float px, float py, double angle, bool* map, int Width, [MarshalAs(UnmanagedType.LPArray, SizeConst = 2), Out()]float[] result);
+        public static unsafe extern void Ray(float px, float py, double angle, bool* map, int Width, [MarshalAs(UnmanagedType.LPArray, SizeConst = 2), Out()] float[] result);
 
         /*
         public double Ray(float px, float py, double angle, out double offset)

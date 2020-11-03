@@ -2,10 +2,6 @@
 using SFML.Audio;
 using SFML.Graphics;
 using SFML.System;
-using SFML.Window;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 
 namespace SFMLMazeWalker
@@ -26,8 +22,8 @@ namespace SFMLMazeWalker
         }
 
         private void StartOnClick() { Program.isMenu = false; Program.inmenu.Stop(); Program.ingame.Play(); isFirst = false; }
-        private void NewGameOnClick() 
-        { 
+        private void NewGameOnClick()
+        {
             isFirst = false;
             Program.map = new Map();
             Program.player = new Player(Program.map);
@@ -169,7 +165,7 @@ namespace SFMLMazeWalker
             var bg = new RectangleShape(new Vector2f(Settings.sWidth, Settings.sHeight))
             {
                 Texture = background,
-                Position = new Vector2f(0,0)
+                Position = new Vector2f(0, 0)
             };
 
 
