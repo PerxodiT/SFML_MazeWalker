@@ -4,6 +4,7 @@ using SFML.Graphics;
 using SFML.System;
 using System.Threading;
 
+
 namespace SFMLMazeWalker
 {
     class Menu
@@ -111,15 +112,18 @@ namespace SFMLMazeWalker
         private void VSynhOnClick()
         {
             Settings.VSync = !Settings.VSync;
-            Thread.Sleep(200);
+            Thread.Sleep(300);
+            FPSLimit.ChangeButtonState(Settings.VSync ? ButtonState.Inactive : ButtonState.Active);
             string VSynhText = Settings.VSync ? "Вкл" : "Выкл";
             VSynh.SetText($"Вертикальная синхронизация: {VSynhText}");
+            Settings.Save();
         }
         private void ResolutionOnClick()
         {
             Thread.Sleep(300);
             Settings.ResMode = (Settings.ResMode + 1) % Settings.ResCount;
             Settings.Update(true);
+            Settings.Save();
         }
 
         private void FPSLimitOnClick()
@@ -128,6 +132,7 @@ namespace SFMLMazeWalker
             Settings.CurrentFPS_ID = (Settings.CurrentFPS_ID + 1) % Settings.FpsLimits.Length;
             Settings.FPS_Limit = Settings.FpsLimits[Settings.CurrentFPS_ID];
             FPSLimit.SetText($"Ограничение FPS: {Settings.FPS_Limit}");
+            Settings.Save();
         }
 
         public void SettingsMenu()
@@ -136,6 +141,7 @@ namespace SFMLMazeWalker
 
             FPSLimit.SetText($"Ограничение FPS: {Settings.FPS_Limit}");
             FPSLimit.SetAction(FPSLimitOnClick);
+            FPSLimit.ChangeButtonState(Settings.VSync ? ButtonState.Inactive : ButtonState.Active);
             FPSLimit.SetPosition(new Vector2f(Settings.sWidth + 200, Settings.sHeight - 200 - 25));
             FPSLimit.SetDestinationPoint(new Vector2f(Settings.sWidth - 50 - FPSLimit.GetGlobalBounds().Width, Settings.sHeight - 200 - 25));
             FPSLimit.StartAnimation();

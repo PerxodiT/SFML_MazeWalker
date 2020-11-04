@@ -2,6 +2,9 @@
 using SFML.Window;
 using SFMLMazeWalker;
 using System;
+using System.IO;
+using System.Linq.Expressions;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace MazeWalker
 {
@@ -37,7 +40,38 @@ namespace MazeWalker
 
 
 
+        public static void Save()
+        {
+            SettingsToSave save = new SettingsToSave();
+            File.Delete("Settings.bin");
+            Stream SaveFileStream = File.Create("Settings.bin");
+            BinaryFormatter serializer = new BinaryFormatter();
+            serializer.Serialize(SaveFileStream, save);
+            SaveFileStream.Close();
+        }
 
+        public static void Load()
+        {
+            Console.WriteLine("Settings loading from file.");
+            try
+            {
+                if (File.Exists("Settings.bin"))
+                {
+                    Console.WriteLine("Reading saved file");
+                    Stream openFileStream = File.OpenRead("Settings.bin");
+                    BinaryFormatter deserializer = new BinaryFormatter();
+                    SettingsToSave load = (SettingsToSave)deserializer.Deserialize(openFileStream);
+                    openFileStream.Close();
+                    //openFileStream();
+                    load.Load();
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Error when loading settings: \n" + e.Message);
+            }
+            finally { Save(); }
+        }
 
         public static void Update(bool isResolutionChanhed = false)
         {
@@ -78,5 +112,72 @@ namespace MazeWalker
         public static int CurrentFPS_ID = 0;
         public static uint FPS_Limit = 144;
         public static bool VSync = false;
+    }
+
+    [Serializable]
+    class SettingsToSave
+    {
+        int ResMode;
+        int sWidth;
+        int sHeight;
+        int mWidth;
+        int mHeight;
+        double FOV;
+        int sHalfHeight;
+        int WallHeight;
+        int RAY_COUNT;
+        double Half_FOV;
+        double deltaFOV;
+        int MapSize;
+        float Scale;
+        float Camera_Dist;
+        uint[] FpsLimits;
+        int CurrentFPS_ID;
+        uint FPS_Limit;
+        bool VSync;
+
+        public SettingsToSave()
+        {
+            ResMode = Settings.ResMode;
+            sWidth = Settings.sWidth;
+            sHeight = Settings.sHeight;
+            mWidth = Settings.mWidth;
+            mHeight = Settings.mHeight;
+            FOV = Settings.FOV;
+            sHalfHeight = Settings.sHalfHeight;
+            WallHeight = Settings.WallHeight;
+            RAY_COUNT = Settings.RAY_COUNT;
+            Half_FOV = Settings.Half_FOV;
+            deltaFOV = Settings.deltaFOV;
+            MapSize = Settings.MapSize;
+            Scale = Settings.Scale;
+            Camera_Dist = Settings.Camera_Dist;
+            FpsLimits = Settings.FpsLimits;
+            CurrentFPS_ID = Settings.CurrentFPS_ID;
+            FPS_Limit = Settings.FPS_Limit;
+            VSync = Settings.VSync;
+        }
+
+        public void Load()
+        {
+            Settings.ResMode = ResMode;
+            Settings.sWidth = sWidth;
+            Settings.sHeight = sHeight;
+            Settings.mWidth = mWidth;
+            Settings.mHeight = mHeight;
+            Settings.FOV = FOV;
+            Settings.sHalfHeight = sHalfHeight;
+            Settings.WallHeight = WallHeight;
+            Settings.RAY_COUNT = RAY_COUNT;
+            Settings.Half_FOV = Half_FOV;
+            Settings.deltaFOV = deltaFOV;
+            Settings.MapSize = MapSize;
+            Settings.Scale = Scale;
+            Settings.Camera_Dist = Camera_Dist;
+            Settings.FpsLimits = FpsLimits;
+            Settings.CurrentFPS_ID = CurrentFPS_ID;
+            Settings.FPS_Limit = FPS_Limit;
+            Settings.VSync = VSync;
+        }
     }
 }

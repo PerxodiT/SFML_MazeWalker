@@ -4,6 +4,9 @@ using SFML.Graphics;
 using SFML.System;
 using SFML.Window;
 using System;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Xml.Linq;
 
 namespace SFMLMazeWalker
 {
@@ -45,8 +48,11 @@ namespace SFMLMazeWalker
             window.MouseMoved += Window_MouseMoved;
         }
 
+        public static string SettingsFileName = "Settings.bin";
         static void Main(string[] args)
         {
+            Settings.Load();
+
             Init();
 
             float FPS = 0;
