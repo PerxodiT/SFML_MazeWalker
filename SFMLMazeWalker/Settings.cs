@@ -21,6 +21,9 @@ namespace MazeWalker
         public const double PlayerSpeed = 1.5;
         public const int TextureScale = 1024;
 
+        public static int AntialiasingLevelID = 0;
+        public static uint[] AntialiasingLevels = new uint[] { 16, 8, 4, 2, 0 };
+
         public static int mWidth = 400;
         public static int mHeight = 300;
 
@@ -37,17 +40,21 @@ namespace MazeWalker
 
         public static float Scale = sWidth / RAY_COUNT;
         public static float Camera_Dist = (float)(sWidth / (2 * Math.Tan(Half_FOV)));
-
+        public static int Profile = 0;
 
 
         public static void Save()
         {
-            SettingsToSave save = new SettingsToSave();
-            File.Delete("Settings.bin");
-            Stream SaveFileStream = File.Create("Settings.bin");
-            BinaryFormatter serializer = new BinaryFormatter();
-            serializer.Serialize(SaveFileStream, save);
-            SaveFileStream.Close();
+            try
+            {
+                SettingsToSave save = new SettingsToSave();
+                File.Delete("Settings.bin");
+                Stream SaveFileStream = File.Create("Settings.bin");
+                BinaryFormatter serializer = new BinaryFormatter();
+                serializer.Serialize(SaveFileStream, save);
+                SaveFileStream.Close();
+            }
+            catch (Exception e) { }
         }
 
         public static void Load()
@@ -77,6 +84,8 @@ namespace MazeWalker
         {
             mWidth = 400;
             mHeight = 300;
+
+            Program.settings.AntialiasingLevel = AntialiasingLevels[AntialiasingLevelID];
 
             sWidth = (int)Resolutions[ResMode].Width;
             sHeight = (int)Resolutions[ResMode].Height;
@@ -135,9 +144,14 @@ namespace MazeWalker
         int CurrentFPS_ID;
         uint FPS_Limit;
         bool VSync;
+        int AntialiasingLevelID = 0;
+        uint[] AntialiasingLevels = { 16, 8, 4, 2, 0 };
+        int Profile;
 
         public SettingsToSave()
         {
+            AntialiasingLevelID = Settings.AntialiasingLevelID;
+            AntialiasingLevels = Settings.AntialiasingLevels;
             ResMode = Settings.ResMode;
             sWidth = Settings.sWidth;
             sHeight = Settings.sHeight;
@@ -156,10 +170,13 @@ namespace MazeWalker
             CurrentFPS_ID = Settings.CurrentFPS_ID;
             FPS_Limit = Settings.FPS_Limit;
             VSync = Settings.VSync;
+            Profile = Settings.Profile;
         }
 
         public void Load()
         {
+            Settings.AntialiasingLevelID = AntialiasingLevelID;
+            Settings.AntialiasingLevels = AntialiasingLevels;
             Settings.ResMode = ResMode;
             Settings.sWidth = sWidth;
             Settings.sHeight = sHeight;
@@ -178,6 +195,7 @@ namespace MazeWalker
             Settings.CurrentFPS_ID = CurrentFPS_ID;
             Settings.FPS_Limit = FPS_Limit;
             Settings.VSync = VSync;
+            Settings.Profile = Profile;
         }
     }
 }

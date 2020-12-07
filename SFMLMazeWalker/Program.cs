@@ -1,4 +1,5 @@
-﻿using MazeWalker;
+﻿
+using MazeWalker;
 using SFML.Audio;
 using SFML.Graphics;
 using SFML.System;
@@ -7,6 +8,7 @@ using System;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Xml.Linq;
+
 
 namespace SFMLMazeWalker
 {
@@ -25,6 +27,7 @@ namespace SFMLMazeWalker
             Styles.Fullscreen,
             settings
         );
+
         static double frametime = 1;
         public static Player player;
         public static Map map;
@@ -51,6 +54,7 @@ namespace SFMLMazeWalker
         public static string SettingsFileName = "Settings.bin";
         static void Main(string[] args)
         {
+            
             Settings.Load();
 
             Init();
@@ -80,6 +84,11 @@ namespace SFMLMazeWalker
             menu = new Menu();
             menu.OnOpen();
 
+            Text debug = new Text($"Время расчета: {player.CalcTime.TotalMilliseconds}\nВремя отрисовки: {player.DrawTime.TotalMilliseconds}", new Font(Resources.FPS_Font));
+            debug.Position = new Vector2f(50, Settings.sHeight - 400);
+            debug.FillColor = Color.Magenta;
+
+            Settings.Update(true);
 
             while (window.IsOpen)
             {
@@ -140,6 +149,10 @@ namespace SFMLMazeWalker
                     player.DrawOnMap(window);
                 }
                 //====================
+                if (fcount == 20)
+                debug.DisplayedString = $"Время расчета: {player.CalcTime.TotalMilliseconds}\nВремя отрисовки: {player.DrawTime.TotalMilliseconds}\nИмеет фокус: {window.HasFocus()}";
+
+                window.Draw(debug);
                 window.Draw(fps);
                 window.Display();
 
@@ -148,7 +161,8 @@ namespace SFMLMazeWalker
                 if (fcount == 20)
                 {
                     FPS = (float)(1 / frametime);
-                    fcount = 0;
+                    fcount = 0;                    
+                    window.Draw(debug);
                 }
             }
         }

@@ -1,14 +1,10 @@
 ﻿using System.Runtime.InteropServices;
 
-//using System.ComponentModel.Composition;
-//using System.Xaml;
-
 namespace MazeWalker
 {
     struct RayCast
     {
         Map Map;
-        //const int THREADS = Settings.RAY_COUNT;
 
         public RayCast(Map map)
         {

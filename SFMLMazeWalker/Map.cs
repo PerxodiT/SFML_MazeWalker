@@ -3,10 +3,14 @@ using SFML.System;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
+using System.Runtime.CompilerServices;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace MazeWalker
 {
-    struct Coord
+    [Serializable]
+    class Coord : ICloneable
     {
         public Coord(uint x, uint y)
         {
@@ -16,7 +20,13 @@ namespace MazeWalker
         public uint x { get; set; }
         public uint y { get; set; }
 
+        public object Clone()
+        {
+            return new Coord(this.x, this.y);
+        }
     }
+
+    [Serializable]
     class Map
     {
 
@@ -30,7 +40,7 @@ namespace MazeWalker
 
         public bool isVisible = false;
         public Maze maze;
-        public Hashtable Walls;
+
 
         public Map()
         {
@@ -60,13 +70,35 @@ namespace MazeWalker
             Out = new Coord((uint)maze.End.X * 2 + 1, (uint)maze.End.Y * 2 + 1);
             In = new Coord((uint)maze.Start.X * 2 + 1, (uint)maze.Start.Y * 2 + 1);
 
-            Walls = new Hashtable(walls);
             Console.WriteLine("Map init complete!");
         }
+
+        public Map(bool[,] Map, int width, int height, Coord start, Coord end)
+        {
+
+            Width = width;
+            Height = height;
+
+
+
+            DiagLen = Math.Sqrt(Width * Width + Height * Height);
+            Tile = Settings.mHeight / Height;
+            map = new bool[Height, Width];
+
+            for (uint y = 0; y < Height; y++)
+                for (uint x = 0; x < Width; x++)
+                    if (Map[x, y])
+                        map[x, y] = true;
+
+            Out = (Coord)end.Clone();
+            In = (Coord)start.Clone();
+
+            Console.WriteLine("Map init complete!");
+        }
+
         public bool isWall(int x, int y)
         {
-            if (Walls.ContainsKey(Coord(x, y))) return true;
-            return false;
+            return map[x, y];
         }
 
         public void Draw(RenderWindow render)
@@ -80,16 +112,21 @@ namespace MazeWalker
             render.Draw(mapOutline);
             if (isVisible)
             {
-                foreach (DictionaryEntry wall in Walls)
-                {
-                    RectangleShape rect = new RectangleShape(new Vector2f(Tile, Tile))
+                for (int x = 0; x < Width; x++)
+                    for (int y = 0; y < Height; y++)
                     {
-                        FillColor = new Color(0, 0, 0, 200),
-                        Position = new Vector2f(((Coord)wall.Key).x * Tile, ((Coord)wall.Key).y * Tile)
-                    };
+                        if (map[x, y])
+                        {
+                            RectangleShape rect = new RectangleShape(new Vector2f(Tile, Tile))
+                            {
+                                FillColor = new Color(0, 0, 0, 200),
+                                Position = new Vector2f(x * Tile, y * Tile)
+                            };
+                            render.Draw(rect);
+                        }
 
-                    render.Draw(rect);
-                }
+                    }
+
                 RectangleShape exit = new RectangleShape(new Vector2f(Tile, Tile))
                 {
                     FillColor = new Color(0, 255, 0, 200),

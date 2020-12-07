@@ -10,11 +10,11 @@ namespace SFMLMazeWalker
     class Menu
     {
         Texture background;
-        public Button start, newgame, settings, exit;
+        public Button start, load, newgame, settings, exit;
         public bool isWin = false, isFirst = true;
-        private bool isSettings = false;
 
-        private Button VSynh, ExitSettings, Resolution, FPSLimit;
+        private Button VSynh, ExitSettings, Resolution, FPSLimit, Aliasing;
+        private Button Profile;
 
         public Menu()
         {
@@ -22,7 +22,13 @@ namespace SFMLMazeWalker
             background.Smooth = true;
         }
 
-        private void StartOnClick() { Program.isMenu = false; Program.inmenu.Stop(); Program.ingame.Play(); isFirst = false; }
+        private void StartOnClick() 
+        {
+            Program.isMenu = false;
+            Program.inmenu.Stop();
+            Program.ingame.Play();
+            isFirst = false;
+        }
         private void NewGameOnClick()
         {
             isFirst = false;
@@ -32,12 +38,19 @@ namespace SFMLMazeWalker
             Program.inmenu.Stop();
             Program.ingame.Play();
         }
-        private void ExitOnClick() { Program.Exit = true; }
+        private void ExitOnClick() 
+        {
+            Program.Exit = true;
+        }
         private void SettingsOnClick()
         {
-            start.SetSpeed(new Vector2f(-5, 0));
+            start.SetSpeed(new Vector2f(-6, 0));
             start.SetDestinationPoint(new Vector2f(-200, 50));
             start.StartAnimation();
+
+            load.SetSpeed(new Vector2f(-5, 0));
+            load.SetDestinationPoint(new Vector2f(-200, 50));
+            load.StartAnimation();
 
             newgame.SetSpeed(new Vector2f(-4, 0));
             newgame.SetDestinationPoint(new Vector2f(-200, 50));
@@ -51,6 +64,7 @@ namespace SFMLMazeWalker
             exit.SetDestinationPoint(new Vector2f(-200, 50));
             exit.StartAnimation();
 
+            Aliasing.Enabled = true;
             FPSLimit.Enabled = true;
             VSynh.Enabled = true;
             ExitSettings.Enabled = true;
@@ -60,36 +74,53 @@ namespace SFMLMazeWalker
 
         public void OnOpen()
         {
-            start = new Button("Продолжить", Program.button, new Vector2f(5, 0));
+            start = new Button("Продолжить", Program.button, new Vector2f(6, 0));
             start.SetAction(StartOnClick);
             start.SetDestinationPoint(new Vector2f(50, 50));
             start.SetPosition(new Vector2f(-200, 50));
             start.StartAnimation();
 
+            load = new Button("Загрузить игру", Program.button, new Vector2f(5, 0));
+            load.SetAction(LoadOnClick);
+            load.SetDestinationPoint(new Vector2f(50, 100));
+            load.SetPosition(new Vector2f(-200, 100));
+            load.StartAnimation();
+
             newgame = new Button("Новая игра", Program.button, new Vector2f(4, 0));
             newgame.SetAction(NewGameOnClick);
-            newgame.SetDestinationPoint(new Vector2f(50, 100));
-            newgame.SetPosition(new Vector2f(-200, 100));
+            newgame.SetDestinationPoint(new Vector2f(50, 150));
+            newgame.SetPosition(new Vector2f(-200, 150));
             newgame.StartAnimation();
 
             settings = new Button("Настройки", Program.button, new Vector2f(3, 0));
             settings.SetAction(SettingsOnClick);
-            settings.SetDestinationPoint(new Vector2f(50, 150));
-            settings.SetPosition(new Vector2f(-200, 150));
+            settings.SetDestinationPoint(new Vector2f(50, 200));
+            settings.SetPosition(new Vector2f(-200, 200));
             settings.StartAnimation();
 
             exit = new Button("Выход", Program.button, new Vector2f(2, 0));
             exit.SetAction(ExitOnClick);
-            exit.SetDestinationPoint(new Vector2f(50, 150));
-            exit.SetPosition(new Vector2f(-200, 200));
+            exit.SetDestinationPoint(new Vector2f(50, 250));
+            exit.SetPosition(new Vector2f(-200, 250));
             exit.StartAnimation();
 
+            Profile = new Button($"Текущий профиль {Settings.Profile}", Program.button, new Vector2f(-3, 0));
+            Profile.SetAction(ProfileOnClick);
+            Profile.SetDestinationPoint(new Vector2f(Settings.sWidth - Profile.GetGlobalBounds().Width - 50, 50));
+            Profile.SetPosition(new Vector2f(Settings.sWidth + 50, 50));
+            Profile.StartAnimation();
+
+
+            string AA = Settings.AntialiasingLevels[Settings.AntialiasingLevelID] == 0 ? "Выкл" : Settings.AntialiasingLevels[Settings.AntialiasingLevelID].ToString() + "X";
+
+            Aliasing = new Button($"Сглаживание: {AA}", Program.button, new Vector2f(-7, 0));
             FPSLimit = new Button($"Ограничение FPS: {Settings.FPS_Limit}", Program.button, new Vector2f(-6, 0));
-            Resolution = new Button($"Разрешение {Settings.sWidth}X{Settings.sHeight}", Program.button, new Vector2f(-5, 0));
+            Resolution = new Button($"Разрешение: {Settings.sWidth}X{Settings.sHeight}", Program.button, new Vector2f(-5, 0));
             string VSynhText = Settings.VSync ? "Вкл" : "Выкл";
             VSynh = new Button($"Вертикальная синхронизация: {VSynhText}", Program.button, new Vector2f(-4, 0));
             ExitSettings = new Button("Назад", Program.button, new Vector2f(-2, 0));
 
+            Aliasing.Enabled = false;
             FPSLimit.Enabled = false;
             Resolution.Enabled = false;
             VSynh.Enabled = false;
@@ -98,6 +129,24 @@ namespace SFMLMazeWalker
             Program.ingame.Pause();
             if (Program.inmenu.Status != SoundStatus.Playing)
                 Program.inmenu.Play();
+
+        }
+        
+        private void ProfileOnClick()
+        {
+            Settings.Profile = (Settings.Profile + 1) % 10;
+            Profile.SetText($"Текущий профиль {Settings.Profile}");
+            Thread.Sleep(300);
+        }
+
+        private void LoadOnClick()
+        {
+
+        }
+
+        public void SaveMenu()
+        {
+            
         }
 
 
@@ -135,15 +184,32 @@ namespace SFMLMazeWalker
             Settings.Save();
         }
 
+        private void AliasingOnClick()
+        {
+            Thread.Sleep(300);
+            Settings.AntialiasingLevelID = (Settings.AntialiasingLevelID + 1) % Settings.AntialiasingLevels.Length;
+            Settings.Update(true);
+            Settings.Save();
+        }
+
         public void SettingsMenu()
         {
             isSettings = true;
+
+            string AA = Settings.AntialiasingLevels[Settings.AntialiasingLevelID] == 0 ? "Выкл" : Settings.AntialiasingLevels[Settings.AntialiasingLevelID].ToString() + "X";
+
+            Aliasing.SetText($"Сглаживание: { AA }");
+            Aliasing.SetAction(AliasingOnClick);
+            Aliasing.SetPosition(new Vector2f(Settings.sWidth + 200, Settings.sHeight - 250 - 25));
+            Aliasing.SetDestinationPoint(new Vector2f(Settings.sWidth - 50 - Aliasing.GetGlobalBounds().Width, Settings.sHeight - 250 - 25));
+            Aliasing.StartAnimation();
 
             FPSLimit.SetText($"Ограничение FPS: {Settings.FPS_Limit}");
             FPSLimit.SetAction(FPSLimitOnClick);
             FPSLimit.ChangeButtonState(Settings.VSync ? ButtonState.Inactive : ButtonState.Active);
             FPSLimit.SetPosition(new Vector2f(Settings.sWidth + 200, Settings.sHeight - 200 - 25));
             FPSLimit.SetDestinationPoint(new Vector2f(Settings.sWidth - 50 - FPSLimit.GetGlobalBounds().Width, Settings.sHeight - 200 - 25));
+
             FPSLimit.StartAnimation();
 
             Resolution.SetText($"Разрешение {Settings.sWidth}X{Settings.sHeight}");
@@ -184,7 +250,11 @@ namespace SFMLMazeWalker
             render.Draw(newgame);
             render.Draw(settings);
             render.Draw(exit);
+            render.Draw(load);
+            render.Draw(Profile);
 
+
+            render.Draw(Aliasing);
             render.Draw(FPSLimit);
             render.Draw(Resolution);
             render.Draw(VSynh);

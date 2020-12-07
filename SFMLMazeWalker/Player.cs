@@ -3,16 +3,24 @@ using SFML.System;
 using SFML.Window;
 using SFMLMazeWalker;
 using System;
+using System.Diagnostics;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Threading;
 
 namespace MazeWalker
 {
     class Player
     {
-        float x { get; set; }
-        float y { get; set; }
-        double a { get; set; }
+        public TimeSpan DrawTime = new TimeSpan(), CalcTime = new TimeSpan();
+        public float x { get; set; }
+        public float y { get; set; }
+        public double a { get; set; }
         float sin_a, cos_a;
         private Map Map;
+        //public int Lives = 5;
+        //public int profile = 0;
+        //bool isSaving = false;
         RayCast RayCast;
         Texture wall_texture;
         System.Drawing.Point mapActivator;
@@ -91,6 +99,7 @@ namespace MazeWalker
             render.Draw(floor);
         }
 
+        Stopwatch sw = new Stopwatch();
         public void Draw(RenderWindow render)
         {
             DrawBG(render);
@@ -98,7 +107,7 @@ namespace MazeWalker
             float[] offsets = new float[Settings.RAY_COUNT];
             double[] angles = new double[Settings.RAY_COUNT];
 
-
+            sw.Start();
             int i = 0;
             double angle = a - Settings.Half_FOV;
             while (angle < a + Settings.Half_FOV && i < Settings.RAY_COUNT)
@@ -107,7 +116,6 @@ namespace MazeWalker
                 angle += Settings.deltaFOV;
                 i++;
             }
-
             for (int tid = 0; tid < dists.Length; tid++)
             {
                 unsafe
@@ -126,8 +134,10 @@ namespace MazeWalker
                     }
                 }
             }
-
-
+            sw.Stop();
+            CalcTime = sw.Elapsed;
+            sw.Reset();
+            sw.Start();
             int j = 0;
             float Screen_x = 0;
             foreach (double dist in dists)
@@ -145,6 +155,10 @@ namespace MazeWalker
                 j++;
                 Screen_x += Settings.Scale;
             }
+            sw.Stop();
+            DrawTime = sw.Elapsed;
+
+            
         }
 
         public void DrawOnMap(RenderWindow render)
@@ -159,7 +173,7 @@ namespace MazeWalker
             CircleShape circle = new CircleShape(c / 2)
             {
                 FillColor = Color.Red,
-                Origin = new Vector2f(5, 5),
+                Origin = new Vector2f(c/2, c/2),
                 Position = new Vector2f(x * c + c / 4, y * c + c / 4),
             };
             render.Draw(mapact);
