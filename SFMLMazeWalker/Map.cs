@@ -39,6 +39,8 @@ namespace MazeWalker
         public Coord In { get; private set; }
 
         public bool isVisible = false;
+
+        [NonSerialized]
         public Maze maze;
 
 
@@ -73,13 +75,14 @@ namespace MazeWalker
             Console.WriteLine("Map init complete!");
         }
 
-        public Map(bool[,] Map, int width, int height, Coord start, Coord end)
+        public Map(bool[,] Map, int width, int height, Coord start, Coord end, bool IsVisible)
         {
+            maze = new Maze(Settings.MapSize, Settings.MapSize);
 
             Width = width;
             Height = height;
 
-
+            isVisible = IsVisible;
 
             DiagLen = Math.Sqrt(Width * Width + Height * Height);
             Tile = Settings.mHeight / Height;
@@ -98,6 +101,7 @@ namespace MazeWalker
 
         public bool isWall(int x, int y)
         {
+            if (x >= Width || y >= Height || x < 0 || y < 0) return true;
             return map[x, y];
         }
 

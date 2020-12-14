@@ -8,7 +8,8 @@ namespace SFMLMazeWalker
     enum ButtonState
     {
         Active,
-        Inactive
+        Inactive,
+        NotClickable
     }
     delegate void VoidEvent();
     class Button : Drawable
@@ -80,6 +81,7 @@ namespace SFMLMazeWalker
             switch (state)
             {
                 case ButtonState.Active: fillColor = Color.White; break;
+                case ButtonState.NotClickable: fillColor = Color.White; break;
                 case ButtonState.Inactive: fillColor = new Color(100, 100, 100, 150); break;
             }
         }

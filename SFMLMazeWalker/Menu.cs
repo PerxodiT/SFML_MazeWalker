@@ -2,24 +2,64 @@
 using SFML.Audio;
 using SFML.Graphics;
 using SFML.System;
+using System;
+using System.IO;
 using System.Threading;
+
 
 
 namespace SFMLMazeWalker
 {
     class Menu
     {
+        public TextBox textBox;
+
+
         Texture background;
         public Button start, load, newgame, settings, exit;
         public bool isWin = false, isFirst = true;
 
         private Button VSynh, ExitSettings, Resolution, FPSLimit, Aliasing;
         private Button Profile;
+        private float Fade = 0F;
+
+        public SliderInput Music, SFX;
 
         public Menu()
         {
             background = new Texture(Resources.menu_bg);
             background.Smooth = true;
+
+            Music = new SliderInput(Settings.sWidth - 50 - Settings.sWidth / 4, Settings.sHeight - 400 - 25, 30, Settings.sWidth / 4, false);
+
+            SFX = new SliderInput(Settings.sWidth - 50 - Settings.sWidth / 4, Settings.sHeight - 500 - 25, 30, Settings.sWidth / 4, false);
+            Music.onChange = MusicVolumeChange;
+            SFX.onChange = SFXVolumeChange;
+            Music.SetText("Музыка");
+            SFX.SetText("Звуки");
+
+
+            textBox = new TextBox(
+                new Vector2f(Settings.sWidth / 2, Settings.sHalfHeight),
+                new Vector2f(300, 30),
+                "Тест",
+                new Font(Resources.MenuFont)
+                )
+            {
+                BackgroundColor = Color.White,
+                OutlineColor = Color.Blue
+            };
+        }
+
+        private void MusicVolumeChange()
+        {
+            Program.ingame.Volume = Music.Progress * 100;
+            Program.inmenu.Volume = Music.Progress * 100;
+        }
+        private void SFXVolumeChange()
+        {
+            Program.steps.Volume = SFX.Progress * 100;
+            Program.button.Volume = SFX.Progress * 100;
         }
 
         private void StartOnClick() 
@@ -69,11 +109,31 @@ namespace SFMLMazeWalker
             VSynh.Enabled = true;
             ExitSettings.Enabled = true;
             Resolution.Enabled = true;
+
+            var temp = Music.Progress;
+            Music = new SliderInput(Settings.sWidth - 50 - Settings.sWidth / 4, Settings.sHeight - 400 - 25, 30, Settings.sWidth / 4, false);
+            Music.Progress = temp;
+
+            temp = SFX.Progress;
+            SFX = new SliderInput(Settings.sWidth - 50 - Settings.sWidth / 4, Settings.sHeight - 500 - 25, 30, Settings.sWidth / 4, false);
+            SFX.Progress = temp;
+
+            Music.onChange = MusicVolumeChange;
+            SFX.onChange = SFXVolumeChange;
+            Music.SetText("Музыка");
+            SFX.SetText("Звуки");
+
+            Music.Active = true;
+            SFX.Active = true;
+
             SettingsMenu();
         }
 
         public void OnOpen()
         {
+            if (!isFirst && !isWin)
+                SaveManager.Save();
+
             start = new Button("Продолжить", Program.button, new Vector2f(6, 0));
             start.SetAction(StartOnClick);
             start.SetDestinationPoint(new Vector2f(50, 50));
@@ -125,6 +185,11 @@ namespace SFMLMazeWalker
             Resolution.Enabled = false;
             VSynh.Enabled = false;
             ExitSettings.Enabled = false;
+            Music.Active = false;
+            SFX.Active = false;
+
+            if (!File.Exists($"Saves\\Profile{Settings.Profile}.map") || !File.Exists($"Saves\\Profile{Settings.Profile}.plr")) load.ChangeButtonState(ButtonState.Inactive);
+            else load.ChangeButtonState(ButtonState.Active);
 
             Program.ingame.Pause();
             if (Program.inmenu.Status != SoundStatus.Playing)
@@ -136,12 +201,18 @@ namespace SFMLMazeWalker
         {
             Settings.Profile = (Settings.Profile + 1) % 10;
             Profile.SetText($"Текущий профиль {Settings.Profile}");
+            if (!File.Exists($"Saves\\Profile{Settings.Profile}.map") || !File.Exists($"Saves\\Profile{Settings.Profile}.plr")) load.ChangeButtonState(ButtonState.Inactive);
+            else load.ChangeButtonState(ButtonState.Active);
             Thread.Sleep(300);
         }
 
         private void LoadOnClick()
         {
-
+            SaveManager.Load();
+            isFirst = false;
+            Program.isMenu = false;
+            Program.inmenu.Stop();
+            Program.ingame.Play();
         }
 
         public void SaveMenu()
@@ -156,7 +227,6 @@ namespace SFMLMazeWalker
         }
         private void ExitSettingsOnAnimEnd()
         {
-            isSettings = false;
         }
         private void VSynhOnClick()
         {
@@ -172,7 +242,9 @@ namespace SFMLMazeWalker
             Thread.Sleep(300);
             Settings.ResMode = (Settings.ResMode + 1) % Settings.ResCount;
             Settings.Update(true);
+            Program.player.ReInit();
             Settings.Save();
+            Settings.RestartNeeded = true;
         }
 
         private void FPSLimitOnClick()
@@ -194,7 +266,7 @@ namespace SFMLMazeWalker
 
         public void SettingsMenu()
         {
-            isSettings = true;
+
 
             string AA = Settings.AntialiasingLevels[Settings.AntialiasingLevelID] == 0 ? "Выкл" : Settings.AntialiasingLevels[Settings.AntialiasingLevelID].ToString() + "X";
 
@@ -239,12 +311,23 @@ namespace SFMLMazeWalker
                 Texture = background,
                 Position = new Vector2f(0, 0)
             };
-
-
             render.Draw(bg);
+
+            if (Settings.RestartNeeded)
+            {
+                Fade += 0.02F;
+                Fade = Fade % (MathF.PI * 2);
+                var restart = new Text("Перезапустите игру!", new Font(Resources.MenuFont));
+                restart.FillColor = new Color(255,0,0, (byte)(Math.Sin(Fade) * 128 + 127));
+                restart.Position = new Vector2f(Settings.sWidth / 2 - restart.GetLocalBounds().Width / 2, Settings.sHeight - restart.GetLocalBounds().Height - 10);
+                render.Draw(restart);
+            }
+
 
             if (isWin || isFirst) start.ChangeButtonState(ButtonState.Inactive);
             else start.ChangeButtonState(ButtonState.Active);
+
+            //END TEST ELEMENT
 
             render.Draw(start);
             render.Draw(newgame);
@@ -259,7 +342,11 @@ namespace SFMLMazeWalker
             render.Draw(Resolution);
             render.Draw(VSynh);
             render.Draw(ExitSettings);
-
+            if (Music.Active && SFX.Active)
+            {
+                render.Draw(Music);
+                render.Draw(SFX);
+            }
 
         }
     }

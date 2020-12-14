@@ -33,10 +33,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="QuestionOnMap.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Remove="Recources\button.wav" />
     <None Remove="Recources\cursor.png" />
     <None Remove="Recources\FPS_Font.ttf" />
@@ -98,12 +94,10 @@
 
   <ItemGroup>
     <None Include="bin\Recources\button.wav" />
-    <None Include="QuestionOnMap.cs" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="SFML.Net" Version="2.5.0" />
-    <PackageReference Include="SharpDX.Direct3D11" Version="4.2.0" />
     <PackageReference Include="System.ComponentModel.Composition" Version="4.7.0" />
     <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="4.7.0" />
   </ItemGroup>

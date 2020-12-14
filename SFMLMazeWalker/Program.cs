@@ -14,6 +14,8 @@ namespace SFMLMazeWalker
 {
     class Program
     {
+        public static float TEST;
+
         public static bool isMenu = true;
         public static bool Exit = false;
         public static ContextSettings settings = new ContextSettings()
@@ -49,12 +51,32 @@ namespace SFMLMazeWalker
             window.KeyPressed += Window_KeyPressed;
             window.KeyReleased += Window_KeyReleased;
             window.MouseMoved += Window_MouseMoved;
+            window.TextEntered += Window_TextEntered;
+            window.JoystickConnected += Window_JoystickConnected;
+            window.JoystickButtonPressed += Window_JoystickButtonPressed;
+        }
+
+        private static void Window_JoystickButtonPressed(object sender, JoystickButtonEventArgs e)
+        {
+            TEST = e.Button;
+            //if (e.Button == 5)
+            //player.Run();
+        }
+
+        private static void Window_JoystickConnected(object sender, JoystickConnectEventArgs e)
+        {
+            window.SetJoystickThreshold(0.05F);
+        }
+
+        private static void Window_TextEntered(object sender, TextEventArgs e)
+        {
+            menu.textBox.TextEntered(e);
         }
 
         public static string SettingsFileName = "Settings.bin";
         static void Main(string[] args)
         {
-            
+
             Settings.Load();
 
             Init();
@@ -102,35 +124,49 @@ namespace SFMLMazeWalker
                 fps.DisplayedString = ((int)FPS).ToString();
                 window.DispatchEvents();
 
-                KeysPressed = 0;
-                if (Keyboard.IsKeyPressed(Keyboard.Key.W))
+                if (player.Stamina > 1) player.Stamina = 1;
+                if (player.Stamina < 0) player.Stamina = 0;
+                Joystick.Update();
+                if (!Joystick.IsConnected(0))
                 {
-                    if (steps.Status != SoundStatus.Playing && Keyboard.IsKeyPressed(Keyboard.Key.W))
-                        steps.Play();
-                    KeysPressed++;
-                    player.Walk(Keyboard.Key.W, frametime);
+                    if (Keyboard.IsKeyPressed(Keyboard.Key.RShift) || Keyboard.IsKeyPressed(Keyboard.Key.LShift))
+                        player.Run();
+                    else player.Stamina += player.Stamina < 1 ? 0.0025F : 0;
+                    if (Keyboard.IsKeyPressed(Keyboard.Key.W))
+                    {
+                        if (steps.Status != SoundStatus.Playing && Keyboard.IsKeyPressed(Keyboard.Key.W))
+                            steps.Play();
+                        player.Walk(Keyboard.Key.W, frametime);
+                    }
+                    if (Keyboard.IsKeyPressed(Keyboard.Key.A))
+                    {
+                        if (steps.Status != SoundStatus.Playing && Keyboard.IsKeyPressed(Keyboard.Key.A))
+                            steps.Play();
+                        player.Walk(Keyboard.Key.A, frametime);
+                    }
+                    if (Keyboard.IsKeyPressed(Keyboard.Key.S))
+                    {
+                        if (steps.Status != SoundStatus.Playing && Keyboard.IsKeyPressed(Keyboard.Key.S))
+                            steps.Play();
+                        player.Walk(Keyboard.Key.S, frametime);
+                    }
+                    if (Keyboard.IsKeyPressed(Keyboard.Key.D))
+                    {
+                        if (steps.Status != SoundStatus.Playing && Keyboard.IsKeyPressed(Keyboard.Key.D))
+                            steps.Play();
+                        player.Walk(Keyboard.Key.D, frametime);
+                    }
                 }
-                if (Keyboard.IsKeyPressed(Keyboard.Key.A))
+                else
                 {
-                    if (steps.Status != SoundStatus.Playing && Keyboard.IsKeyPressed(Keyboard.Key.A))
-                        steps.Play();
-                    KeysPressed++;
-                    player.Walk(Keyboard.Key.A, frametime);
+                    player.JoystickTurn();
+                    player.JoystickWalk(frametime);
+
+                    if (Joystick.IsButtonPressed(0,5))
+                        player.Run();
+                    else player.Stamina += player.Stamina < 1 ? 0.0025F : 0;
                 }
-                if (Keyboard.IsKeyPressed(Keyboard.Key.S))
-                {
-                    if (steps.Status != SoundStatus.Playing && Keyboard.IsKeyPressed(Keyboard.Key.S))
-                        steps.Play();
-                    KeysPressed++;
-                    player.Walk(Keyboard.Key.S, frametime);
-                }
-                if (Keyboard.IsKeyPressed(Keyboard.Key.D))
-                {
-                    if (steps.Status != SoundStatus.Playing && Keyboard.IsKeyPressed(Keyboard.Key.D))
-                        steps.Play();
-                    KeysPressed++;
-                    player.Walk(Keyboard.Key.D, frametime);
-                }
+                if (Keyboard.IsKeyPressed(Keyboard.Key.F1)) Help();
 
 
                 window.Clear(Color.White);
@@ -149,8 +185,14 @@ namespace SFMLMazeWalker
                     player.DrawOnMap(window);
                 }
                 //====================
+
+
+
                 if (fcount == 20)
-                debug.DisplayedString = $"Время расчета: {player.CalcTime.TotalMilliseconds}\nВремя отрисовки: {player.DrawTime.TotalMilliseconds}\nИмеет фокус: {window.HasFocus()}";
+                    debug.DisplayedString = $"" +
+                            $"Joystick.Axis.Y = {MathF.Round(Joystick.GetAxisPosition(0, Joystick.Axis.Z) / 100F, 4)}\n" +
+                            $"Joystick.Axis.X = {Joystick.IsButtonPressed(0, 6)}\n" +
+                            $"Test = {TEST}\n";
 
                 window.Draw(debug);
                 window.Draw(fps);
@@ -161,7 +203,7 @@ namespace SFMLMazeWalker
                 if (fcount == 20)
                 {
                     FPS = (float)(1 / frametime);
-                    fcount = 0;                    
+                    fcount = 0;
                     window.Draw(debug);
                 }
             }
@@ -181,8 +223,60 @@ namespace SFMLMazeWalker
 
         }
 
+        static bool isHelp = true;
+        private static void HelpOFF()
+        {
+            isHelp = false;
+        }
+        public static void Help()
+        {
+            isHelp = true;
+            string HelpString = "\t\tПРИВЕТСТВИЕ \n\n " +
+                                "Вас приветствует разработчик игры MazeWalker, \n " +
+                                "вы попали в справку о данной игре. \n\n\n " +
+                                "\t\tУПРАВЛЕНИЕ \n\n " +
+                                "Управление является стандартным для игр и производится клавишами \n " +
+                                "\tW – Движение вперед \n " +
+                                "\tA – Движение влево \n " +
+                                "\tS – Движение назад \n " +
+                                "\tD – Движение вправо \n " +
+                                "Управление поворотом производится мышью \n " +
+                                "Так же доступно ускорение  \n " +
+                                "оно включается на клавишу Shift  \n " +
+                                "(не важно левый или правый) \n " +
+                                "Ускорение действует пока есть выносливость \n " +
+                                "она показана голубой полосой в левом нижнем углу экрана \n\n\n " +
+                                "\t\tЦЕЛЬ \n\n " +
+                                "Целью игры является нахождение выхода из лабиринта, \n " +
+                                "каждый раз лабиринт генерируется случайно но при \n " +
+                                "выходе в меню игра сохраняется в текущий профиль, \n " +
+                                "который выбирается в меню нажатием на надпись «Текущий профиль», \n " +
+                                "затем для загрузки нажмите кнопку «Загрузить». \n " +
+                                "Фиолетовой меткой на миникарте обозначается \n " +
+                                "местоположение бонуса дающего доступ к карте \n " +
+                                "со стенами на которой обозначен выход зеленой меткой.";
+
+            var HelpText = new Button(HelpString, Program.button, new Vector2f(0, -0.5F));
+            HelpText.ChangeButtonState(ButtonState.NotClickable);
+            HelpText.SetPosition(new Vector2f((Settings.sWidth - HelpText.GetLocalBounds().Width) / 2, Settings.sHeight + 20));
+            HelpText.SetDestinationPoint(new Vector2f((Settings.sWidth - HelpText.GetLocalBounds().Width) / 2, -HelpText.GetLocalBounds().Height - 20));
+            HelpText.SetAnimationEndAction(HelpOFF);
+            HelpText.StartAnimation();
+
+            while (isHelp && window.IsOpen)
+            {
+                if (Keyboard.IsKeyPressed(Keyboard.Key.Escape)) isHelp = false;
+                window.DispatchEvents();
+                window.Clear(Color.Black);
+
+                window.Draw(HelpText);
+                window.Display();
+            }
+        }
+
         private static void Window_KeyPressed(object sender, KeyEventArgs e)
         {
+            if (menu.textBox.HasFocus) return;
             if (!isEnding)
             {
                 if (e.Code == Keyboard.Key.V)
@@ -203,8 +297,7 @@ namespace SFMLMazeWalker
                 }
                 return;
             }
-            if (e.Code != Keyboard.Key.Unknown)
-                isMatrix = false;
+            isMatrix = false;
             return;
         }
 
@@ -247,12 +340,18 @@ namespace SFMLMazeWalker
             isEnding = false;
             isMatrix = true;
             //window.KeyPressed += Window_KeyPressed;
+            double fading = 0;
             while (isMatrix && window.IsOpen)
             {
+                fading += 0.02;
                 if (Keyboard.IsKeyPressed(Keyboard.Key.Escape)) isMatrix = false;
                 window.DispatchEvents();
-                window.Clear(Color.Black);
+                window.Clear(new Color(0,0,0,100));
                 window.Draw(matrix);
+
+                win.FillColor = new Color(0, 255, 0, (byte)(Math.Sin(fading) * 128 + 127));
+                fading = fading % (Math.PI * 2);
+
                 window.Draw(win);
                 window.Display();
             }
