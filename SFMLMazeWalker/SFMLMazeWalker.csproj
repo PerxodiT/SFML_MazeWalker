@@ -107,6 +107,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Reference Include="Cloo">
+      <HintPath>..\..\..\OpenTK\OpenCLTemplate\Cloo.dll</HintPath>
+    </Reference>
     <Reference Include="NPP">
       <HintPath>..\lib\NPP.dll</HintPath>
     </Reference>
@@ -115,6 +118,9 @@
     </Reference>
     <Reference Include="NVRTC">
       <HintPath>..\lib\NVRTC.dll</HintPath>
+    </Reference>
+    <Reference Include="OpenCLTemplate">
+      <HintPath>..\..\..\OpenTK\OpenCLTemplate\OpenCLTemplate.dll</HintPath>
     </Reference>
     <Reference Include="OpenTK">
       <HintPath>..\lib\OpenTK.dll</HintPath>

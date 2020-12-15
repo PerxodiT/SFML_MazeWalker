@@ -178,14 +178,14 @@ namespace MazeWalker
             DrawBG(render);
             float[] dists = new float[Settings.RAY_COUNT];
             float[] offsets = new float[Settings.RAY_COUNT];
-            double[] angles = new double[Settings.RAY_COUNT];
+            float[] angles = new float[Settings.RAY_COUNT];
 
             sw.Start();
             int i = 0;
             double angle = a - Settings.Half_FOV;
             while (angle < a + Settings.Half_FOV && i < Settings.RAY_COUNT)
             {
-                angles[i] = angle;
+                angles[i] = (float)angle;
                 angle += Settings.deltaFOV;
                 i++;
             }
@@ -195,15 +195,14 @@ namespace MazeWalker
                 {
                     fixed (bool* map = Map.map)
                     {
-                        float[] mas = new float[2];
-                        RayCast.Ray(x,
+                        //float[] mas = new float[2];
+                        RayCast.GpGPU_Ray(x,
                                 y,
-                                angles[tid],
-                                map,
-                                Map.Width,
-                                mas);
-                        dists[tid] = mas[0] * (float)Math.Cos(a - angles[tid]);
-                        offsets[tid] = mas[1];
+                                angles,
+                                out dists,
+                                out offsets);
+                        //dists[tid] = mas[0] * (float)Math.Cos(a - angles[tid]);
+                        //offsets[tid] = mas[1];
                     }
                 }
             }
